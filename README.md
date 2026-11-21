@@ -74,3 +74,11 @@ Se calculará cuantos galones esperaba el modelo y el rendimiento real en compar
 - Métricas de Evaluación:
     - RMSE (Root Mean Squared Error): 1.73 MPG.
     - MAE (Mean Absolute Error): 1.31 MPG.
+
+
+---
+# Laboratorio 10
+El notebook del laboratorio está en la carpeta llamada 'Lab10', basicamente es el mismo notebook que el proyecto nada mas con lo necesario. En este ya se encuentran los resultados corridos. Tanto este como el notebook del proyecto fueron corridos en Google Colab por lo que recomiendo hacer lo mismo.
+
+**Cómo ejecutar**
+Simplemente colocar el notebook en google colab, preparar una carpeta para los datos csv del modelo y colocar el archivo, volver a ejecutar lo necesario.
