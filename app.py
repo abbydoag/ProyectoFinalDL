@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.metrics import MeanSquaredError
 import joblib
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -10,14 +11,14 @@ st.set_page_config(page_title="ConsuGas", page_icon="⛽", layout="wide")
 
 @st.cache_resource
 def cargar_recursos():
-    modelo = tf.keras.models.load_model('data/modelo_cars.h5')
+    modelo = tf.keras.models.load_model('data/modelo_cars.h5', custom_objects={'mse': MeanSquaredError()})
     scaler = joblib.load('data/scaler_cars.pkl')
     features = joblib.load('data/features_cars.pkl')
     return modelo, scaler, features
 
 modelo, scaler, features = cargar_recursos()
 
-MILLA_A_KM = 1.60934
+MILLA_A_KM = 1.60934 #conversion en caso use km
 
 if 'historial_cargas' not in st.session_state:
     st.session_state.historial_cargas = []
@@ -41,9 +42,9 @@ with tab1:
     col1, col2 = st.columns(2)
     with col1:
         cylinders = st.selectbox("Cilindros", [3, 4, 5, 6, 8], index=1)
-        engine_size = st.number_input("Tamaño motor (Litros)", min_value=0.8, max_value=8.0, value=2.5, step=0.1)
-        horsepower = st.number_input("Caballos de Fuerza (HP)", min_value=40, max_value=600, value=157, step=5)
-        weight = st.number_input("Peso del vehículo (libras)", min_value=1500, max_value=6500, value=3417, step=50)
+        engine_size = st.number_input("Tamaño motor (Litros)", min_value=0.8, max_value=8.0, step=0.1)
+        horsepower = st.number_input("Caballos de Fuerza (HP)", min_value=40, max_value=600, step=5)
+        weight = st.number_input("Peso del vehículo (libras)", min_value=1500, max_value=6500, step=50)
         
     with col2:
         if st.button("Calcular Predicción", type="primary"):
@@ -77,11 +78,11 @@ with tab2:
             col_r1, col_r2, col_r3 = st.columns(3)
             with col_r1:
                 fecha = st.date_input("Fecha de la carga", datetime.now())
-                trip = st.number_input(f"Trip ({unidad_consumo})", min_value=1.0, value=300.0)
+                trip = st.number_input(f"Trip ({unidad_consumo})", min_value=1.0,)
             with col_r2:
-                precio = st.number_input("Precio del galón (Q)", min_value=1.0, value=35.64, step=0.1)
+                precio = st.number_input("Precio del galón (Q)", min_value=1.0, step=0.1)
             with col_r3:
-                monto_total = st.number_input("Monto pagado (Q)", min_value=10.0, value=350.0, step=10.0)
+                monto_total = st.number_input("Monto pagado (Q)", min_value=10.0, step=10.0)
             
             submit = st.form_submit_button("Registrar Carga")
 
@@ -95,7 +96,7 @@ with tab2:
             st.session_state.historial_cargas.append({
                 'Fecha': fecha.strftime("%Y-%m-%d"),
                 'Trip': round(trip, 2),
-                'Monto (Q)': round(monto_total, 2),
+                'Monto total(Q)': round(monto_total, 2),
                 'Precio (Q)': round(precio, 2),
                 'Galones Reales': round(galones_reales, 2),
                 'Galones Esperados': round(galones_esperados, 2),
